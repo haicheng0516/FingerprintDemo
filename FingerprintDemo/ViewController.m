@@ -8,7 +8,7 @@
 
 #import "ViewController.h"
 
-
+#define SCLOG(...) printf("%s\n",[[NSString stringWithFormat:__VA_ARGS__]UTF8String]);
 @interface ViewController ()
 - (IBAction)yanzhengBtn:(UIButton *)sender;
 
@@ -28,32 +28,32 @@
     NSError *error = nil;
     NSString *result = @"需要您的支付密码进行支付";
     context.localizedFallbackTitle = @"快捷支付";
-    NSLog(@"data before authentication == %@",[context evaluatedPolicyDomainState]);
+    SCLOG(@"data before authentication == %@",[context evaluatedPolicyDomainState]);
     
     if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error]) {
         [context evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason:result reply:^(BOOL success, NSError * _Nullable error) {
            
             if (success) {
                 
-                NSLog(@"验证成功");
-                NSLog(@"data after authentication = %@",[context evaluatedPolicyDomainState]);
+                SCLOG(@"验证成功");
+                SCLOG(@"data after authentication = %@",[context evaluatedPolicyDomainState]);
             }else{
             
-                NSLog(@"%@",error.localizedDescription);
+                SCLOG(@"%@",error.localizedDescription);
                 switch (error.code) {
                     case LAErrorSystemCancel:
-                        NSLog(@"Authentication was cancelled by the system");
+                        SCLOG(@"Authentication was cancelled by the system");
                          //切换到其他APP，系统取消验证Touch ID
                         break;
                     case LAErrorUserCancel:
                     {
-                        NSLog(@"Authentication was cancelled by the user");
+                        SCLOG(@"Authentication was cancelled by the user");
                         //用户取消验证Touch ID
                         break;
                     }
                     case LAErrorUserFallback:
                     {
-                        NSLog(@"User selected to enter custom password");
+                        SCLOG(@"User selected to enter custom password");
                         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                             //用户选择输入密码，切换主线程处理
                         }];
@@ -61,22 +61,22 @@
                     }
                     case LAErrorAuthenticationFailed:
                     {
-                        NSLog(@"Authentication Failed");
+                        SCLOG(@"Authentication Failed");
                         break;
                     }
                     case LAErrorTouchIDLockout:
                     {
-                        NSLog(@"TOUCH ID is locked out");
+                        SCLOG(@"TOUCH ID is locked out");
                         break;
                     }
                     case LAErrorAppCancel:
                     {
-                        NSLog(@"app cancle the authentication");
+                        SCLOG(@"app cancle the authentication");
                         break;
                     }
                     case LAErrorInvalidContext:
                     {
-                        NSLog(@"context is invalidated");
+                        SCLOG(@"context is invalidated");
                         break;
                     }
                     default:
@@ -91,22 +91,22 @@
         }];
     }else{
     
-        NSLog(@"%@",error.localizedDescription);
+        SCLOG(@"%@",error.localizedDescription);
         //不支持指纹识别，LOG出错误详情
         switch (error.code) {
             case LAErrorTouchIDNotEnrolled:
             {
-                NSLog(@"TouchID is not enrolled");
+                SCLOG(@"TouchID is not enrolled");
                 break;
             }
             case LAErrorPasscodeNotSet:
             {
-                NSLog(@"A passcode has not been set");
+                SCLOG(@"A passcode has not been set");
                 break;
             }
             default:
             {
-                NSLog(@"TouchID not available");
+                SCLOG(@"TouchID not available");
                 break;
             }
         }
